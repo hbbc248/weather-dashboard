@@ -1,14 +1,17 @@
-
 var APIKey = "8192203cac5ae6d369c41fb47e14d962";
+var arrHistory = []; 
 
 // function to get current weather by city 
 var getWeather = function(city) {
+    // clear value in input
+    $("#city-input").val("");
     var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + APIKey;
     fetch(apiUrl).then(function(response){
         // request was succesful
         if(response.ok) {
             response.json().then(function(data) {
                 //console.log(data);
+                // call current weather display function
                 displayCurrent(data);
             });
         } else {
@@ -32,8 +35,9 @@ var displayCurrent = function(currentWeather) {
     // getting lat and lon to call a different API for UV index
     var lat = currentWeather.coord.lat;
     var lon = currentWeather.coord.lon;
+    // call fucntion to get UV index
     GetUvIndex(lat, lon, cityName);
-    
+        
 };
 // function to get UV index API
 var GetUvIndex = function (lat, lon, cityName) {
@@ -44,8 +48,11 @@ var GetUvIndex = function (lat, lon, cityName) {
             response.json().then(function(data) {
                 //console.log(data);
                 var UVIndex = data.current.uvi;
+                // call UV index print, create element in history and forecast weather functions
                 UVIndexPrint(UVIndex);
+                createHistoryLi(cityName);
                 forecast(cityName);
+
             });
         } else {
             alert("Error: " + response.status);
@@ -108,15 +115,57 @@ var displayForecast = function(forecastWeather) {
     }
 };
 
-// click event listener to get city name and pass to getWeather
 
+var createHistoryLi = function(city) {
+    $("#history-list").prepend("<li class='list-group-item'>" + city + "</li>");
+    
+    // convert li elements text content into an array 
+    arrHistory = $("li").map(function(j, element) { 
+        return $(element).text(); 
+    }).get();
+    // cut the array at a max of 10 and eliminate the extra elements
+    if (arrHistory.length > 10) {
+        arrHistory.length = 10;
+        $("li").slice(10).remove();
+    }
+    saveCityHistory(arrHistory);
+};
+
+// load history from localstorage
+var loadHistory = function() {
+    var loadedHistoryArr = JSON.parse(localStorage.getItem("history"));
+    // display history cities on starting from oldest search so the most recent shows on top
+    for (i = (loadedHistoryArr.length - 1); i >= 0; i--) {
+        createHistoryLi(loadedHistoryArr[i]);
+    }
+};
+
+// save history to localstorage
+var saveCityHistory = function(arr) {
+    localStorage.setItem("history", JSON.stringify(arr));
+};
+
+// click on search button. Get city name and pass to getWeather
 $("#search-button").on("click", function() {
     var cityInput = $("#city-input").val();
     if (cityInput) {
-        $("#city-input").val("");
         getWeather(cityInput);
     } else {
         alert("You must enter a city name to search");
     }
-    
 });
+
+// Clear History button was click
+$("#clear-history").on("click", function() {
+    console.log("works");
+});
+
+
+
+
+
+
+
+
+
+loadHistory();
