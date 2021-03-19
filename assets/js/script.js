@@ -115,9 +115,10 @@ var displayForecast = function(forecastWeather) {
     }
 };
 
-
+// Function to create element on history list 
 var createHistoryLi = function(city) {
-    $("#history-list").prepend("<li class='list-group-item'>" + city + "</li>");
+    var cityId = city.replace(/ /g, "-");
+    $("#history-list").prepend("<li id='" + cityId + "' class='list-group-item'>" + city + "</li>");
     
     // convert li elements text content into an array 
     arrHistory = $("li").map(function(j, element) { 
@@ -128,6 +129,7 @@ var createHistoryLi = function(city) {
         arrHistory.length = 10;
         $("li").slice(10).remove();
     }
+    // save history
     saveCityHistory(arrHistory);
 };
 
@@ -162,12 +164,13 @@ $("#clear-history").on("click", function() {
     saveCityHistory(emptyArr);
 });
 
-
-
-
-
-
-
-
+// city on history was clicked
+$("#history-list").click (function(e) {
+    var city = e.target.innerText;
+    var cityId = e.target.id;
+    // remove element clicked from list and run getweather function
+    $("#" + cityId).remove();
+    getWeather(city);
+});
 
 loadHistory();
