@@ -41,13 +41,12 @@ var displayCurrent = function(currentWeather) {
     // getting lat and lon to call a different API for UV index
     var lat = currentWeather.coord.lat;
     var lon = currentWeather.coord.lon;
-    GetUvIndex(lat, lon);
+    GetUvIndex(lat, lon, cityName);
     
 };
 // function to get UV index API
-var GetUvIndex = function (lat, lon) {
+var GetUvIndex = function (lat, lon, cityName) {
     var apiURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=imperial&appid=" + APIKey;
-    console.log(apiURL)
     fetch(apiURL).then(function(response) {
         // request was succesful
         if(response.ok) {
@@ -55,6 +54,7 @@ var GetUvIndex = function (lat, lon) {
                 console.log(data);
                 var UVIndex = data.current.uvi;
                 UVIndexPrint(UVIndex);
+                forecast(cityName);
             });
         } else {
             alert("Error: " + response.status);
@@ -68,11 +68,53 @@ var UVIndexPrint = function(index) {
     // clear any previous span on #UV-index p
     $("#UV-index").empty();
     $("#UV-index").text("UV Index: ");
-    $("#UV-index").append("<span id='index' class='badge bg-danger p-1 text-light fs-6'></span>");
+    $("#UV-index").append("<span id='index' class='badge p-1 fs-6'></span>");
     $("#index").text(index);
+    if (index <= 2) {
+        $("#index").addClass("bg-success text-light");
+    }
+    if ((index > 2) && (index <=5)) {
+        $("#index").addClass("bg-warning text-dark");
+    }
+    if (index > 5) {
+        $("#index").addClass("bg-danger text-light");
+    }
+};
+
+// Forecast by city
+var forecast = function(city) {
+    var apiUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + APIKey;
+    fetch(apiUrl).then(function(response){
+        // request was succesful
+        if(response.ok) {
+            response.json().then(function(data) {
+                console.log(data);
+                displayForecast(data);
+            });
+        } else {
+            alert("Error: " + response.status);
+        }
+    });
+};
+
+// Display forecast function
+var displayForecast = function(forecastWeather) {
+    var forecastEl = $(".forecast");
+    for (i = 0; i < forecastEl.length; i++) {
+        // clean any previous data
+        $(forecastEl[i]).empty();
+        var index = (i*8) + 7;
+        console.log(index);
+    }
+
+
+
 
 
 };
+
+
+
 
 
 
