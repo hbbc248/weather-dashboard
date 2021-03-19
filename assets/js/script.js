@@ -8,7 +8,7 @@ var getWeather = function(city) {
         // request was succesful
         if(response.ok) {
             response.json().then(function(data) {
-                console.log(data);
+                //console.log(data);
                 displayCurrent(data);
             });
         } else {
@@ -42,7 +42,7 @@ var GetUvIndex = function (lat, lon, cityName) {
         // request was succesful
         if(response.ok) {
             response.json().then(function(data) {
-                console.log(data);
+                //console.log(data);
                 var UVIndex = data.current.uvi;
                 UVIndexPrint(UVIndex);
                 forecast(cityName);
@@ -78,7 +78,7 @@ var forecast = function(city) {
         // request was succesful
         if(response.ok) {
             response.json().then(function(data) {
-                console.log(data);
+                //console.log(data);
                 displayForecast(data);
             });
         } else {
@@ -108,5 +108,15 @@ var displayForecast = function(forecastWeather) {
     }
 };
 
+// click event listener to get city name and pass to getWeather
 
-getWeather("Midland");
+$("#search-button").on("click", function() {
+    var cityInput = $("#city-input").val();
+    if (cityInput) {
+        $("#city-input").val("");
+        getWeather(cityInput);
+    } else {
+        alert("You must enter a city name to search");
+    }
+    
+});
