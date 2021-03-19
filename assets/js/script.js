@@ -44,8 +44,7 @@ var displayCurrent = function(currentWeather) {
     GetUvIndex(lat, lon);
     
 };
-
-// function to get UV index
+// function to get UV index API
 var GetUvIndex = function (lat, lon) {
     var apiURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=imperial&appid=" + APIKey;
     console.log(apiURL)
@@ -54,6 +53,8 @@ var GetUvIndex = function (lat, lon) {
         if(response.ok) {
             response.json().then(function(data) {
                 console.log(data);
+                var UVIndex = data.current.uvi;
+                UVIndexPrint(UVIndex);
             });
         } else {
             alert("Error: " + response.status);
@@ -61,6 +62,17 @@ var GetUvIndex = function (lat, lon) {
     });
 };
 
+// function to print UV index and show different collors depending if UV index (favorable-green moderate-yellow or severe-red)
+var UVIndexPrint = function(index) {
+    console.log(index);
+    // clear any previous span on #UV-index p
+    $("#UV-index").empty();
+    $("#UV-index").text("UV Index: ");
+    $("#UV-index").append("<span id='index' class='badge bg-danger p-1 text-light fs-6'></span>");
+    $("#index").text(index);
+
+
+};
 
 
 
