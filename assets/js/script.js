@@ -1,13 +1,4 @@
 
-
-
-
-
-
-
-
-
-
 var APIKey = "8192203cac5ae6d369c41fb47e14d962";
 
 // function to get current weather by city 
@@ -64,7 +55,6 @@ var GetUvIndex = function (lat, lon, cityName) {
 
 // function to print UV index and show different collors depending if UV index (favorable-green moderate-yellow or severe-red)
 var UVIndexPrint = function(index) {
-    console.log(index);
     // clear any previous span on #UV-index p
     $("#UV-index").empty();
     $("#UV-index").text("UV Index: ");
@@ -103,19 +93,20 @@ var displayForecast = function(forecastWeather) {
     for (i = 0; i < forecastEl.length; i++) {
         // clean any previous data
         $(forecastEl[i]).empty();
+        // position index on 7, 15, 23, 31 and 39 to get all 5 days forecast
         var index = (i*8) + 7;
-        console.log(index);
+        // get date for the forecast day
+        var forecastDate = new Date(forecastWeather.list[index].dt * 1000);
+        var forecastDay = forecastDate.getDate();
+        var forecastMonth = forecastDate.getMonth() + 1;
+        var forecastYear = forecastDate.getFullYear();
+        // add date, image, temperature and humidity to html element
+        $(forecastEl[i]).append("<p class='mt-3 mb-0 fs-6'>" + forecastMonth + "/" + forecastDay + "/" + forecastYear + "</p>");
+        $(forecastEl[i]).append("<img src='https://openweathermap.org/img/wn/" + forecastWeather.list[index].weather[0].icon + "@2x.png'></img>");
+        $(forecastEl[i]).append("<p> Temp: " + forecastWeather.list[index].main.temp + " &#176F</p>");
+        $(forecastEl[i]).append("<p>Humidity: " + forecastWeather.list[index].main.humidity + " %</p>");    
     }
-
-
-
-
-
 };
-
-
-
-
 
 
 getWeather("Midland");
