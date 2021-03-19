@@ -157,7 +157,9 @@ $("#search-button").on("click", function() {
 
 // Clear History button was click
 $("#clear-history").on("click", function() {
-    console.log("works");
+    $("#history-list").empty();
+    var emptyArr = [];
+    saveCityHistory(emptyArr);
 });
 
 
